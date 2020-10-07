@@ -1,0 +1,64 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>svg view</title>
+</head>
+<style>
+    .main{
+        display: flex;
+        margin: 20px;
+    }
+    .ctrl{
+        display: flex;
+        flex-direction: column;
+    }
+    #css{
+        width: 400px;
+        height: 400px;
+        border: 1px solid; 
+    }
+    #svg{
+        margin: 0 20px;
+        width: 100px;
+        height: 100px;
+    }
+    svg{
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<body>
+
+    <div class="main">
+        <div class="ctrl">
+            <textarea id="css"></textarea>
+            <button id="refresh">refresh</button>
+            <input type="file" id="load" accept="image/svg"/>
+        </div>
+        <div id="svg"></div>
+    </div>
+    <script>
+        const cssElem = document.querySelector('#css') 
+        const svgElem = document.querySelector('#svg')
+        let svg = decodeURIComponent(location.hash.slice(1))
+        document.querySelector('#refresh').addEventListener('click',refresh) 
+        document.querySelector('#load').addEventListener("change", handleFiles, false);
+        function refresh() {
+            svgElem.innerHTML = svg + `<style>${cssElem.value}</style>`
+        }
+        function handleFiles() {
+            const file = this.files[0]; 
+            const reader = new FileReader();
+            reader.onload = function() { 
+                console.log(reader.result);
+                svg = reader.result
+                history.pushState(null, null, `#${encodeURIComponent(svg)}`);
+                refresh() 
+            }
+            reader.readAsText(file);
+        }
+        refresh()
+    </script>
+</body>
+</html>
